@@ -14,8 +14,8 @@ from libc.stdio cimport printf, fprintf, fopen, fclose, FILE, sprintf
 
 
 cdef extern from "string.h" nogil:                                                    
-        char *strtok (char *inp_str, const char *delimiters)  
-    #    char *strtok_r (char *inp_str, const char *delimiters, char **)
+    #    char *strtok (char *inp_str, const char *delimiters)  
+        char *strtok_r (char *inp_str, const char *delimiters, char **)
 
 
 cdef extern from "<algorithm>" namespace "std" nogil:
@@ -29,34 +29,34 @@ cdef class WhitespaceTokenizer:
 
     cdef vector[string] tokenize(self, const string& inp_string) nogil:
 
-#        cdef char* ptr1
-#        cdef char* pch = strtok_r (<char*> inp_string.c_str(), " ", &ptr1)                          
-#        cdef oset[string] tokens                                                
-#        cdef vector[string] out_tokens                                          
-#        while pch != NULL:                                                  
-#            tokens.insert(string(pch))                                      
-#            pch = strtok_r (NULL, " ", &ptr1)                                        
-#        for s in tokens:                                                    
-#            out_tokens.push_back(s)                                         
-#        return out_tokens   
+        cdef char* ptr1
+        cdef char* pch = strtok_r (<char*> inp_string.c_str(), " ", &ptr1)                          
+        cdef oset[string] tokens                                                
+        cdef vector[string] out_tokens                                          
+        while pch != NULL:                                                  
+            tokens.insert(string(pch))                                      
+            pch = strtok_r (NULL, " ", &ptr1)                                        
+        for s in tokens:                                                    
+            out_tokens.push_back(s)                                         
+        return out_tokens   
 
-        cdef char* pch                                                              
-        pch = strtok (<char*> inp_string.c_str(), " ") 
-        cdef oset[string] tokens                                            
-        cdef vector[string] out_tokens                                              
-        if self.return_set:                             
-            while pch != NULL:                                                          
-                tokens.insert(string(pch))                                          
-                pch = strtok (NULL, " ")
-            for s in tokens:
-                out_tokens.push_back(s)
-        else:
-            while pch != NULL:                                                  
-                out_tokens.push_back(string(pch))                                      
-                pch = strtok (NULL, " ")                                        
-
-        out_tokens.push_back(string("funny"))
-        return out_tokens     
+#        cdef char* pch                                                              
+#        pch = strtok (<char*> inp_string.c_str(), " ") 
+#        cdef oset[string] tokens                                            
+#        cdef vector[string] out_tokens                                              
+#        if self.return_set:                             
+#            while pch != NULL:                                                          
+#                tokens.insert(string(pch))                                          
+#                pch = strtok (NULL, " ")
+##            for s in tokens:
+#                out_tokens.push_back(s)
+#        else:
+#            while pch != NULL:                                                  
+#                out_tokens.push_back(string(pch))                                      
+#                pch = strtok (NULL, " ")                                        
+#
+#        out_tokens.push_back(string("funny"))
+#        return out_tokens     
     
 
 cdef void tokenize_without_materializing(vector[string]& lstrings, 
@@ -125,6 +125,8 @@ def test_tok_ws(s):
     str2bytes = lambda x: x if isinstance(x, bytes) else x.encode('utf-8')
     return ws.tokenize(str2bytes(s))
 
+#
+#
 #
 #
 #
