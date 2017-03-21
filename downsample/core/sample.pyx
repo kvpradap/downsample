@@ -26,7 +26,7 @@ from downsample.core.tokenizers cimport tokenize_without_materializing
 #from inverted_index cimport InvertedIndex
 
 def sample_cython(ltable, rtable, l_key_attr, r_key_attr,                        
-                 l_join_attr, r_join_attr, sample_size, y_param, seed, l_out_prefix='l_', r_out_prefix='r_'):
+                 l_join_attr, r_join_attr, sample_size, y_param, l_out_prefix='l_', r_out_prefix='r_'):
      
     cdef vector[pair[int, int]] sample
     cdef vector[string] lstrings, rstrings
@@ -43,8 +43,6 @@ def sample_cython(ltable, rtable, l_key_attr, r_key_attr,
     for entry in sample:
         output_rows.append([l_ids[entry.first], r_ids[entry.second]])
                      
-    for seed_pair_row in seed.itertuples(index=False):                          
-        output_rows.append([seed_pair_row[0], seed_pair_row[1]])                
                                                                                 
     output_header = get_output_header_from_tables(l_key_attr, r_key_attr,       
                                                   None, None,                   
@@ -58,8 +56,9 @@ def sample_cython(ltable, rtable, l_key_attr, r_key_attr,
     return output_table       
 
 cdef void convert_to_string_vector(string_col, vector[string]& string_vector):        
+    str2bytes = lambda x: x if isinstance(x, bytes) else x.encode('utf-8')
     for val in string_col:                                                      
-        string_vector.push_back(str(val))        
+        string_vector.push_back(str2bytes(val))        
 
 cdef void convert_to_int_vector(int_col, vector[int]& int_vector):  
     for val in int_col:                                                      
@@ -123,6 +122,25 @@ cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings,
 cdef bool comp(const pair[int, int]& l, const pair[int, int]& r):
     return l.second > r.second   
 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
 #
 #
 #
