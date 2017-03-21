@@ -61,16 +61,18 @@ if __name__ == "__main__":
 
     # specify extensions that need to be compiled
     extensions = [
-            #setuptools.Extension("downsample.core.tokenizers", sources=["downsample/core/tokenizers.pyx"], language="c++",
-            #         extra_compile_args = ["./downsample/core","-O3", "-ffast-math", "-march=native", "-fopenmp"],
-            #                       extra_link_args=['-fopenmp']),
-              setuptools.Extension("downsample.core.utils", sources=["downsample/core/utils.pyx", "downsample/core/inverted_index.cpp"], language="c++",
+            setuptools.Extension("downsample.core.tokenizers", sources=["downsample/core/tokenizers.pyx"], language="c++",
+                     extra_compile_args = ["./downsample/core","-O3", "-ffast-math", "-march=native", "-fopenmp"],
+                                   extra_link_args=['-fopenmp']),
+
+            setuptools.Extension("downsample.core.utils", sources=["downsample/core/utils.pyx", "downsample/core/inverted_index.cpp"], language="c++",
                       extra_compile_args = ["-I./downsample/core","-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp']),
-        #setuptools.Extension("downsample.core.sample", sources=["downsample/core/sample.pyx", "downsample/core/inverted_index.cpp"], language="c++",
-        #              extra_compile_args = ["-I./downsample/core","-O3", "-ffast-math", "-march=native", "-fopenmp"],
-        #                            extra_link_args=['-fopenmp']),
-        ]
+
+            setuptools.Extension("downsample.core.sample", sources=["downsample/core/sample.pyx", "downsample/core/inverted_index.cpp"], language="c++",
+                      extra_compile_args = ["-I./downsample/core","-O3", "-ffast-math", "-march=native", "-fopenmp"],
+                                    extra_link_args=['-fopenmp'])
+            ]
 
 
 
