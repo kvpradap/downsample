@@ -5,9 +5,9 @@ __pycache__/
 
 # C extensions
 *.so
-downsample/similarity_measure/*.cpp
-downsample/core/*.cpp
-downsample/utils/*.cpp                                       
+downsample/core/utils.cpp
+downsample/core/sample.cpp
+downsample/core/tokenizers.cpp
 
 # Distribution / packaging
 .Python
