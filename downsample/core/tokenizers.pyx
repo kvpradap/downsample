@@ -16,6 +16,10 @@ import re2
 
 cdef extern from "string.h" nogil:                                                    
     char *strtok (char *inp_str, const char *delimiters)  
+
+
+cdef extern from "<algorithm>" namespace "std" nogil:
+        void sort(vector[int].iterator, vector[int].iterator)
     
 cdef class WhitespaceTokenizer:
     cdef bool return_set
@@ -33,6 +37,7 @@ cdef class WhitespaceTokenizer:
                 tokens.insert(string(pch))                                          
                 pch = strtok (NULL, " ")
             for s in tokens:
+                out_tokens.push_back(string(pch))
         else:
             while pch != NULL:                                                  
                 out_tokens.push_back(string(pch))                                      
@@ -63,18 +68,22 @@ cdef void tokenize_without_materializing(vector[string]& lstrings,
     for j in range(n2):
         rtokens.push_back(vector[string]())
 
+    if tok_type.compare('ws') == 0:
+        ws_tok = WhitespaceTokenizer(True)
+        for j in prange(n1, nogil=True, num_threads=n_jobs):
+            ltokens[j] = ws_tok.tokenize(lstrings[j])
+        for j in prange(n2, nogil=True, num_threads=n_jobs):
+            rtokens[j] = ws_tok.tokenize(rstrings[j])        
     for tokens in ltokens:
         for token in tokens:
             token_freq[token] += 1
-
     for tokens in rtokens:
         for token in tokens:
             token_freq[token] += 1
-                                                                            
     ordered_tokens = []                                                         
     for entry in token_freq:                                                    
-        ordered_tokens.append((entry.first, entry.second))  
-        
+        ordered_tokens.append((entry.first, entry.second))                      
+                                                                                
     cdef int order_idx = 1                                                      
     for token_freq_tuple in sorted(ordered_tokens, key=itemgetter(1)):          
         token_ordering[token_freq_tuple[0]] = order_idx                         
@@ -95,18 +104,18 @@ cdef void tokenize_without_materializing(vector[string]& lstrings,
             otokens.push_back(token_ordering[tokens[j]])                           
         sort(otokens.begin(), otokens.end())
         r_ordered_tokens.push_back(otokens)
-        otokens.clear()          
-    if tok_type.compare('ws') == 0:
-        ws_tok = WhitespaceTokenizer(True)
-        for j in prange(n1, nogil=True, num_threads=n_jobs):
-            ltokens[j] = ws_tok.tokenize(lstrings[j])
-        for j in prange(n2, nogil=True, num_threads=n_jobs):
-            rtokens[j] = ws_tok.tokenize(rstrings[j])        
-    
-def test_tok2(df1, attr1, df2, attr2):
-    cdef vector[string] lstrings, rstrings                                      
-    convert_to_vector(df1[attr1], lstrings)                                    
-    convert_to_vector(df2[attr2], rstrings)                                    
-    st = time.time()
-    tokenize(lstrings, rstrings, 'ws', 'gh1', 4) 
-    print 'time : ', time.time() - st
+        otokens.clear()                          
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#

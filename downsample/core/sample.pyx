@@ -3,7 +3,7 @@ import random
 
 import pandas as pd
 
-from py_stringsimjoin.utils.generic_helper import get_output_header_from_tables    
+from downsample.utils.generic_helper import get_output_header_from_tables    
 
 from cython.parallel import prange                                              
 
@@ -16,9 +16,14 @@ from libcpp.map cimport map as omap
 from libcpp.pair cimport pair                                                   
 from libcpp.algorithm cimport sort 
                                                                                 
-from py_stringsimjoin.apply_rf.inverted_index cimport InvertedIndex             
-from py_stringsimjoin.apply_rf.utils cimport build_inverted_index   
-from py_stringsimjoin.apply_rf.tokenizers cimport tokenize_without_materializing
+from downsample.core.inverted_index cimport InvertedIndex             
+from downsample.core.utils cimport build_inverted_index   
+from downsample.core.tokenizers cimport tokenize_without_materializing
+
+#from tokenizers import tokenize_without_materializing
+
+#from utils cimport build_inverted_index
+#from inverted_index cimport InvertedIndex
 
 def sample_cython(ltable, rtable, l_key_attr, r_key_attr,                        
                  l_join_attr, r_join_attr, sample_size, y_param, seed, l_out_prefix='l_', r_out_prefix='r_'):
@@ -87,7 +92,6 @@ cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings,
      
     for i in sample_rtable_indices:
         tokens = rtokens[i]                                                     
-        print m, n
         m += 1                                                                            
         for j in range(tokens.size()):                                                      
             candidates = index.index[tokens[j]]                                 
@@ -119,3 +123,17 @@ cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings,
 cdef bool comp(const pair[int, int]& l, const pair[int, int]& r):
     return l.second > r.second   
 
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
+#
