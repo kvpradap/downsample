@@ -5,9 +5,11 @@ import downsample
 from downsample.core.sample import sample_cython
 
 import py_stringsimjoin as ssj
+import pandas as pd
 
+A = pd.read_csv('garage/movies.csv', usecols=['id', 'title'], low_memory=False)
+B = pd.read_csv('garage/songs.csv', usecols=['id', 'title'], low_memory=False)
 
-A, B = ssj.load_books_dataset()
 A.dropna(inplace=True)
 B.dropna(inplace=True)
 A.reset_index(inplace=True)
@@ -17,10 +19,10 @@ B['ID'] = range(len(B))
 
 print(str(len(A)))
 print(str(len(B)))
-stopword_list = ['108', 'St']
+stopword_list = ['the', 'as', 'in']
 import time
 st = time.time()
-table_a, table_b = sample_cython(A, B, 'ID', 'ID', 'Title', 'Title', 2500, 1, stopword_list, 1 )
+table_a, table_b = sample_cython(A, B, 'id', 'id', 'title', 'title', 100000, 1, stopword_list, 4 )
 print(time.time()-st)
 print(str(len(table_a)))
 print(str(len(table_b)))

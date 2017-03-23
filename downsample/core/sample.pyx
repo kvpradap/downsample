@@ -120,9 +120,9 @@ cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings,
             if k == cand_pos_ltuples_required:
                 break
 
-        while sample_ltable_indices.size() < y_param:
-            rand_idx = random.randint(0, lstrings.size())
-            sample_ltable_indices.insert(rand_idx)
+        #while sample_ltable_indices.size() < y_param:
+        #    rand_idx = random.randint(0, lstrings.size())
+        #    sample_ltable_indices.insert(rand_idx)
 
         for k in sample_ltable_indices:
             sample.push_back(pair[int, int](k, i))                        
@@ -138,6 +138,7 @@ cdef string remove_punct(string &s):
     print(s[0])
 
 
+#
 #
 #
 #
