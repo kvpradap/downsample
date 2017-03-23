@@ -7,12 +7,16 @@ from downsample.core.sample import sample_cython
 import py_stringsimjoin as ssj
 
 
-A, B = ssj.load_person_dataset()
+A, B = ssj.load_books_dataset()
 A.dropna(inplace=True)
 B.dropna(inplace=True)
-A['A.id'] = range(len(A))
-B['B.id'] = range(len(B))
+A['ID'] = range(len(A))
+B['ID'] = range(len(B))
 
-
-result = sample_cython(A, B, 'A.id', 'B.id', 'A.address', 'B.address', 4, 1)
-print(result)
+stopword_list = ['108', 'St']
+import time
+st = time.time()
+table_a, table_b = sample_cython(A, B, 'ID', 'ID', 'Title', 'Title', 3000, 1, stopword_list, 1 )
+print(time.time()-st)
+print(str(len(table_a)))
+print(str(len(table_b)))

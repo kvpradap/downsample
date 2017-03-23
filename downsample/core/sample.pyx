@@ -15,6 +15,8 @@ from libcpp cimport bool
 from libcpp.map cimport map as omap                                             
 from libcpp.pair cimport pair                                                   
 from libcpp.algorithm cimport sort 
+#from libcpp.algorithm cimport remove_if 
+#from libcpp.cctype cimport ispunct
                                                                                 
 from downsample.core.inverted_index cimport InvertedIndex             
 from downsample.core.utils cimport build_inverted_index   
@@ -26,34 +28,45 @@ from downsample.core.tokenizers cimport tokenize_without_materializing
 #from inverted_index cimport InvertedIndex
 
 def sample_cython(ltable, rtable, l_key_attr, r_key_attr,                        
-                 l_join_attr, r_join_attr, sample_size, y_param, l_out_prefix='l_', r_out_prefix='r_'):
+                 l_join_attr, r_join_attr, sample_size, y_param, stopword_list, n_jobs, l_out_prefix='l_', r_out_prefix='r_'):
      
     cdef vector[pair[int, int]] sample
-    cdef vector[string] lstrings, rstrings
+    cdef vector[string] lstrings, rstrings, stopwords
     cdef vector[int] l_ids, r_ids
+    cdef word
     convert_to_string_vector(ltable[l_join_attr], lstrings)
     convert_to_string_vector(rtable[r_join_attr], rstrings)                     
-    convert_to_int_vector(ltable[l_key_attr], l_ids)
-    convert_to_int_vector(rtable[r_key_attr], r_ids)                            
+    convert_to_string_vector(stopword_list, stopwords)
+    convert_to_int_vector(range(len(ltable)), l_ids)
+    convert_to_int_vector(range(len(rtable)), r_ids)
+    #convert_to_int_vector(ltable[l_key_attr], l_ids)
+    #convert_to_int_vector(rtable[r_key_attr], r_ids)                            
     
-    sample_pairs(lstrings, rstrings, sample_size, y_param, sample)
+    
+    sample_pairs(lstrings, rstrings, sample_size, y_param, stopwords, n_jobs, sample)
  
     output_rows = []
+    
+    sample_l_ids = []
+    sample_r_ids = []
+
     cdef pair[int, int] entry
     for entry in sample:
-        output_rows.append([l_ids[entry.first], r_ids[entry.second]])
+        sample_l_ids.append(l_ids[entry.first])
+        sample_r_ids.append(r_ids[entry.second])
+        #output_rows.append([l_ids[entry.first], r_ids[entry.second]])
                      
+                                                                                   
+    #output_header = get_output_header_from_tables(l_key_attr, r_key_attr,       None, None,                                                l_out_prefix, r_out_prefix)   
                                                                                 
-    output_header = get_output_header_from_tables(l_key_attr, r_key_attr,       
-                                                  None, None,                   
-                                                  l_out_prefix, r_out_prefix)   
-                                                                                
-    output_table = pd.DataFrame(output_rows, columns=output_header)             
+    #output_table = pd.DataFrame(output_rows, columns=output_header)             
                                                                                 
     # add an id column named '_id' to the output table.                         
-    output_table.insert(0, '_id', range(0, len(output_table)))                  
+    #output_table.insert(0, '_id', range(0, len(output_table)))                  
+    l_sampled = ltable.iloc[sample_l_ids]
+    r_sampled = rtable.iloc[sample_r_ids]
                                                                                 
-    return output_table       
+    return l_sampled, r_sampled
 
 cdef void convert_to_string_vector(string_col, vector[string]& string_vector):        
     str2bytes = lambda x: x if isinstance(x, bytes) else x.encode('utf-8')
@@ -65,13 +78,12 @@ cdef void convert_to_int_vector(int_col, vector[int]& int_vector):
         int_vector.push_back(int(val))   
 
 cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings, 
-                  int sample_size, int y_param, vector[pair[int, int]]& sample):
+                  int sample_size, int y_param, vector[string]& stopwords, int n_jobs, vector[pair[int, int]]& sample):
     cdef vector[vector[int]] ltokens, rtokens
-    cdef string tok_type = "ws"
 
     # tokenize input strings using whitespace tokenizer
-    tokenize_without_materializing(lstrings, rstrings, tok_type,            
-                                   ltokens, rtokens, 4)
+    tokenize_without_materializing(lstrings, rstrings, stopwords,            
+                                   ltokens, rtokens, n_jobs)
 
     cdef int number_of_r_tuples_to_sample = <int>ceil(<float>sample_size / <float>y_param)
     sample_rtable_indices = random.sample(range(0, rstrings.size()),          
@@ -122,24 +134,10 @@ cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings,
 cdef bool comp(const pair[int, int]& l, const pair[int, int]& r):
     return l.second > r.second   
 
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
+cdef string remove_punct(string &s):
+    print(s[0])
+
+
 #
 #
 #
