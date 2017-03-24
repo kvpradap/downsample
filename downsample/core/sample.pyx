@@ -85,10 +85,12 @@ cdef void sample_pairs(vector[string]& lstrings, vector[string]& rstrings,
     tokenize_without_materializing(lstrings, rstrings, stopwords,            
                                    ltokens, rtokens, n_jobs)
 
-    cdef int number_of_r_tuples_to_sample = <int>ceil(<float>sample_size / <float>y_param)
+    #cdef int number_of_r_tuples_to_sample = <int>ceil(<float>sample_size / <float>y_param)
+    cdef int number_of_r_tuples_to_sample = <int>sample_size
     sample_rtable_indices = random.sample(range(0, rstrings.size()),          
                                           number_of_r_tuples_to_sample)         
-    cdef int cand_pos_ltuples_required = <int>ceil(y_param / 2.0)    
+    #cdef int cand_pos_ltuples_required = <int>ceil(y_param / 2.0)    
+    cdef int cand_pos_ltuples_required = <int>y_param
 
     # create inverted index over tokens in lstrings
     cdef InvertedIndex index                                                    
@@ -137,37 +139,3 @@ cdef bool comp(const pair[int, int]& l, const pair[int, int]& r):
 cdef string remove_punct(string &s):
     print(s[0])
 
-
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
-#
