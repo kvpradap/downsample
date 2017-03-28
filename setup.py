@@ -72,6 +72,7 @@ if __name__ == "__main__":
             setuptools.Extension("downsample.core.sample", sources=["downsample/core/sample.pyx", "downsample/core/inverted_index.cpp"], language="c++",
                       extra_compile_args = ["-I./downsample/core","-O3", "-ffast-math", "-march=native", "-fopenmp"],
                                     extra_link_args=['-fopenmp'])
+
             ]
 
 

@@ -2,6 +2,7 @@
 import random
 
 import pandas as pd
+import numpy as np
 
 from downsample.utils.generic_helper import get_output_header_from_tables    
 
@@ -67,6 +68,11 @@ def sample_cython(ltable, rtable, l_key_attr, r_key_attr,
     r_sampled = rtable.iloc[sample_r_ids]
                                                                                 
     return l_sampled, r_sampled
+
+
+
+
+
 
 cdef void convert_to_string_vector(string_col, vector[string]& string_vector):        
     str2bytes = lambda x: x if isinstance(x, bytes) else x.encode('utf-8')
@@ -139,3 +145,6 @@ cdef bool comp(const pair[int, int]& l, const pair[int, int]& r):
 cdef string remove_punct(string &s):
     print(s[0])
 
+#
+#
+#
