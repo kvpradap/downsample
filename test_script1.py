@@ -7,8 +7,8 @@ from downsample.core.sample import sample_cython
 import py_stringsimjoin as ssj
 import pandas as pd
 
-A = pd.read_csv('garage/movies.csv', usecols=['id', 'title'], low_memory=False)
-B = pd.read_csv('garage/songs.csv', usecols=['id', 'title'], low_memory=False)
+A = pd.read_csv('garage/datasets/movies.csv', usecols=['id', 'title'], low_memory=False)
+B = pd.read_csv('garage/datasets/songs.csv', usecols=['id', 'title'], low_memory=False)
 
 A.dropna(inplace=True)
 B.dropna(inplace=True)
