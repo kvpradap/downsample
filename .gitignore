@@ -79,3 +79,7 @@ cythonize.dat
 
 #garage
 garage/datasets/
+
+garage/*.gz
+
+err
