@@ -92,8 +92,8 @@ if __name__ == "__main__":
 
     setuptools.setup(
         name='downsample',
-        version='0.2.1',
-        description='Python library for string matching.',
+        version='0.1.0',
+        description='Down sampling code in cython',
         long_description=LONG_DESCRIPTION,
         author='UW Magellan Team',
         author_email='uwmagellan@gmail.com',
