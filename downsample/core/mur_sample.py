@@ -3,6 +3,8 @@ import numpy as np
 from downsample.core.mur_wrapper_cy import get_str_cols, concat_cols, tokenize_n_rem_stopwords
 from downsample.core.mur_wrapper_cy import build_inv_index, sample_pairs
 
+from downsample.core.sample import sample_cython
+
 from dask import delayed
 
 def mur_sample(ltable, rtable, sample_size, y_param, stopword_list=[], num_chunks=1):
@@ -44,3 +46,21 @@ def mur_sample(ltable, rtable, sample_size, y_param, stopword_list=[], num_chunk
     rtbl_sampled = rtable.iloc[r_ids]
 
     return (ltbl_sampled, rtbl_sampled)
+
+
+def mur_sample_1(ltable, rtable, sample_size, y_param):
+    ltbl_str_cols = get_str_cols(ltable)
+    rtbl_str_cols = get_str_cols(rtable)
+
+    ltbl_concat_cols = concat_cols(ltable[ltbl_str_cols])
+    rtbl_concat_cols = concat_cols(rtable[rtbl_str_cols])
+
+    ltable['dummy'] = ltbl_concat_cols
+    rtable['dummy'] = rtbl_concat_cols
+
+    ltbl_sampled, rtbl_sampled = sample_cython(ltable, rtable, 'id', 'id', 'dummy', 'dummy', sample_size, y_param, [], 1)
+    return (ltbl_sampled, rtbl_sampled)
+
+
+
+
