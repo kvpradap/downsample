@@ -3,9 +3,12 @@ import numpy as np
 from downsample.core.mur_wrapper_cy import get_str_cols, concat_cols, tokenize_n_rem_stopwords
 from downsample.core.mur_wrapper_cy import build_inv_index, sample_pairs
 
-from dask import delayed
 
-def down_sample(ltable, rtable, sample_size, y_param, stopword_list=[], num_chunks=1):
+from dask import delayed
+from dask import threaded
+from dask.diagnostics import ProgressBar
+
+def down_sample(ltable, rtable, sample_size, y_param, stopword_list=[], num_chunks=1, scheduler=threaded.get, ret_delayed=False):
 
     # preprocess input tables
     ltbl = (delayed)(pre_process_ltable)(ltable)
@@ -34,7 +37,13 @@ def down_sample(ltable, rtable, sample_size, y_param, stopword_list=[], num_chun
 
     # postprocess
     result = (delayed)(post_process)(result_list, ltable, rtable)
-    return result
+
+    # return
+    if ret_delayed:
+        return result
+    else:
+        with ProgressBar():
+            return result.compute(get=scheduler)
 
 
 
